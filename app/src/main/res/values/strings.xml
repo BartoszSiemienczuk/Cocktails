@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Cocktails</string>
+    <string name="products">Cocktails</string>
+    <string name="cocktail_details">Cocktail Details</string>
+</resources>

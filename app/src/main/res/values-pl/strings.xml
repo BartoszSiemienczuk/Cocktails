@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Drinki</string>
+    <string name="products">Koktajle</string>
+    <string name="cocktail_details">Cocktail Details</string>
+</resources>
