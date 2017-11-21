@@ -2,6 +2,7 @@ package pl.com.siemienczuk.cocktails.model.drink;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
@@ -26,15 +27,22 @@ public class DrinkAdapter extends TypeAdapter<Drink>{
         while(in.hasNext()){
             switch(in.nextName()){
                 case "strDrink":
-                    drink.setName(in.nextString());
+                    if(in.peek() != JsonToken.NULL){
+                        drink.setName(in.nextString());
+                    } else {
+                        in.nextNull();
+                    }
                     break;
                 case "idDrink":
                     drink.setId(in.nextLong());
                     break;
                 case "strDrinkThumb":
-                    drink.setPhotoUrl(new URL(in.nextString()));
+                    if(in.peek() != JsonToken.NULL){
+                        drink.setPhotoUrl(new URL(in.nextString()));
+                    } else {
+                        in.nextNull();
+                    }
                     break;
-
             }
         }
         in.endObject();

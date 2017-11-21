@@ -33,4 +33,5 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
     compileOnly 'org.projectlombok:lombok:1.16.18'
     annotationProcessor 'org.projectlombok:lombok:1.16.18'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }

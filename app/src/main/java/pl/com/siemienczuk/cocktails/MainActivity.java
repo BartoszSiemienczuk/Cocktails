@@ -15,6 +15,8 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import cz.msebera.android.httpclient.Header;
 import pl.com.siemienczuk.cocktails.model.drink.Drink;
@@ -22,39 +24,30 @@ import pl.com.siemienczuk.cocktails.model.drink.DrinkAdapter;
 import pl.com.siemienczuk.cocktails.model.drink.DrinkListWrapper;
 
 public class MainActivity extends AppCompatActivity {
-    ListView cocktailList;
+    ListView cocktailListView;
+    List<Drink> cocktailList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        cocktailList = (ListView)findViewById(R.id.cocktails_list_view);
+        cocktailListView = (ListView)findViewById(R.id.cocktails_list_view);
 
         final ArrayList<String> cocktails = new ArrayList<>();
-        cocktails.add("Barbados Sunrise");
-        cocktails.add("Crazy Frog");
-        cocktails.add("Classic Mojito");
-        cocktails.add("Blue Mojito");
-        cocktails.add("Cosmopolitan");
-        cocktails.add("Sex on the beach");
-        cocktails.add("Martini");
-        cocktails.add("Long Island Iced Tea");
+        cocktails.add("Loading...");
 
         final ArrayAdapter<String> cocktailAdapter = new ArrayAdapter<String>(
                 this, R.layout.cocktail_list_item, R.id.cocktail_list_item_tv, cocktails
         );
 
-        cocktailList.setAdapter(cocktailAdapter);
+        cocktailListView.setAdapter(cocktailAdapter);
 
-        cocktailList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                Toast.makeText(MainActivity.this, "Toast with drink no."+ i, Toast.LENGTH_LONG).show();
-                Intent cocktailDetailIntent = new Intent(MainActivity.this, CocktailDetailActivity.class);
-                cocktailDetailIntent.putExtra("cocktail_name", cocktails.get(i));
-                startActivity(cocktailDetailIntent);
-            }
+        cocktailListView.setOnItemClickListener((adapterView, view, i, l) -> {
+            Intent cocktailDetailIntent = new Intent(MainActivity.this, CocktailDetailActivity.class);
+            cocktailDetailIntent.putExtra("cocktail_name", cocktailList.get(i).getName());
+            cocktailDetailIntent.putExtra("cocktail_thumb_url", cocktailList.get(i).getPhotoUrl().toString());
+            startActivity(cocktailDetailIntent);
         });
 
         AsyncHttpClient cl = new AsyncHttpClient();
@@ -69,9 +62,11 @@ public class MainActivity extends AppCompatActivity {
                 public void onSuccess(int statusCode, Header[] headers, String responseString) {
                     Log.d("Success:", responseString);
                     Gson gson = new GsonBuilder().registerTypeAdapter(Drink.class, new DrinkAdapter()).create();
-                    DrinkListWrapper drinkList = gson.fromJson(responseString, DrinkListWrapper.class);
+                    DrinkListWrapper downloadedDrinks = gson.fromJson(responseString, DrinkListWrapper.class);
                     cocktailAdapter.clear();
-                    drinkList.getDrinks().forEach(drink -> cocktailAdapter.add(drink.getName()));
+                    cocktailList.clear();
+                    cocktailList.addAll(downloadedDrinks.getDrinks());
+                    cocktailAdapter.addAll(cocktailList.stream().map(Drink::getName).collect(Collectors.toList()));
                 }
             }
         );
