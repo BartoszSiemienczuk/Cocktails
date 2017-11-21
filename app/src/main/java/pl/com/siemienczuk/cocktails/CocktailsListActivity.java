@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -22,15 +20,16 @@ import cz.msebera.android.httpclient.Header;
 import pl.com.siemienczuk.cocktails.model.drink.Drink;
 import pl.com.siemienczuk.cocktails.model.drink.DrinkAdapter;
 import pl.com.siemienczuk.cocktails.model.drink.DrinkListWrapper;
+import pl.com.siemienczuk.cocktails.service.CocktailsDbEndpoints;
 
-public class MainActivity extends AppCompatActivity {
+public class CocktailsListActivity extends AppCompatActivity {
     ListView cocktailListView;
     List<Drink> cocktailList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_cocktails_list);
 
         cocktailListView = (ListView)findViewById(R.id.cocktails_list_view);
 
@@ -44,14 +43,14 @@ public class MainActivity extends AppCompatActivity {
         cocktailListView.setAdapter(cocktailAdapter);
 
         cocktailListView.setOnItemClickListener((adapterView, view, i, l) -> {
-            Intent cocktailDetailIntent = new Intent(MainActivity.this, CocktailDetailActivity.class);
+            Intent cocktailDetailIntent = new Intent(CocktailsListActivity.this, CocktailDetailActivity.class);
             cocktailDetailIntent.putExtra("cocktail_name", cocktailList.get(i).getName());
             cocktailDetailIntent.putExtra("cocktail_thumb_url", cocktailList.get(i).getPhotoUrl().toString());
             startActivity(cocktailDetailIntent);
         });
 
         AsyncHttpClient cl = new AsyncHttpClient();
-        cl.get("http://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocktail",
+        cl.get(CocktailsDbEndpoints.FILTER_BY_CATEGORY,
             new TextHttpResponseHandler() {
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {

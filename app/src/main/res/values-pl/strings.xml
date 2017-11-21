@@ -3,4 +3,5 @@
     <string name="app_name">Drinki</string>
     <string name="products">Koktajle</string>
     <string name="cocktail_details">Cocktail Details</string>
+    <string name="categories">Categories</string>
 </resources>
